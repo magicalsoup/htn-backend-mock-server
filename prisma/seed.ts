@@ -1,57 +1,25 @@
 import { PrismaClient, Prisma } from '@prisma/client'
+import { readFileSync } from "fs"
 
 const prisma = new PrismaClient()
 
-const userData: Prisma.UserCreateInput[] = [
-  {
-    name: 'Alice',
-    email: 'alice@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Join the Prisma Slack',
-          content: 'https://slack.prisma.io',
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Nilu',
-    email: 'nilu@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Follow Prisma on Twitter',
-          content: 'https://www.twitter.com/prisma',
-          published: true,
-          viewCount: 42,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Mahmoud',
-    email: 'mahmoud@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Ask a question about Prisma on GitHub',
-          content: 'https://www.github.com/prisma/prisma/discussions',
-          published: true,
-          viewCount: 128,
-        },
-        {
-          title: 'Prisma on YouTube',
-          content: 'https://pris.ly/youtube',
-        },
-      ],
-    },
-  },
-]
+const ALL_USER_DATA = JSON.parse(readFileSync("./prisma/mockUserData.json", 'utf-8'));
+
+const userData: Prisma.UserCreateInput[] = ALL_USER_DATA.map((user) => {
+  return {
+    name: user.name,
+    company: user.company,
+    email: user.email,
+    phone: user.phone,
+    skills: {
+      create: user.skills
+    }
+  }
+})
 
 async function main() {
   console.log(`Start seeding ...`)
+  console.table(userData)
   for (const u of userData) {
     const user = await prisma.user.create({
       data: u,

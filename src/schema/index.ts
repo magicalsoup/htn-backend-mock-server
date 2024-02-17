@@ -1,6 +1,6 @@
 import { builder } from '../builder'
 import './user'
-import './post'
+import './skills'
 import { writeFileSync } from 'fs'
 import { resolve } from 'path'
 import { printSchema } from 'graphql'

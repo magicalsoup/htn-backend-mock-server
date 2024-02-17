@@ -1,16 +1,22 @@
 import SchemaBuilder from '@pothos/core'
 import PrismaPlugin from '@pothos/plugin-prisma'
 import type PrismaTypes from '@pothos/plugin-prisma/generated'
-import { DateTimeResolver } from 'graphql-scalars'
 import { prisma } from './db'
+
 
 export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
   Context: {}
-  Scalars: {
-    DateTime: {
-      Input: Date
-      Output: Date
+  Scalars: {}
+  Objects: {
+    SkillAggregate: {
+      _all: number
+    }
+    SkillFrequency: {
+      skill: string,
+      _count: {
+        _all: number
+      }
     }
   }
 }>({
@@ -22,5 +28,3 @@ export const builder = new SchemaBuilder<{
 
 builder.queryType({})
 builder.mutationType({})
-
-builder.addScalarType('DateTime', DateTimeResolver, {})
