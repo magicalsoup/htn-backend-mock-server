@@ -81,7 +81,7 @@ query {
     company,
     email,
     phone,
-    skills: {
+    skills {
       id,
       skill,
       rating,
@@ -102,11 +102,11 @@ mutation {
     company,
     email,
     phone,
-    skills: {
+    skills {
       id,
       skill,
       rating,
-      userID
+      userId
     }
   }
 }

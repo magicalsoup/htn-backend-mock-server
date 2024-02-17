@@ -9,6 +9,7 @@ type Query {
 }
 
 type Skill {
+  id: Int!
   rating: Int!
   skill: String!
   user: User!
