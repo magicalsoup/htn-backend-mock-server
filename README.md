@@ -15,7 +15,7 @@ This is a graphql server, written using prisma, pothos graphql, and typescript. 
 Download this example:
 
 ```
-git clone [todo]
+git clone https://github.com/magicalsoup/htn-backend-challenge-2024.git
 ```
 
 Install npm dependencies:
@@ -112,9 +112,11 @@ mutation {
 }
 ```
 
-Note that if you do not supply skills, then the server assumes no updates to skills. If you do supply a not null value to skills, then the server assumes those are the user's new cumulative skills. (e.g, if the user had skill A, B, C, but you supply the mutation query with skill D, the user will now only have skill D). 
 
-You can make the user lose all their skills by supplying an empty array for skills.
+#### Notes
+- If you do not supply skills, then the server assumes no updates to skills.
+- If you supply a non-null value to skills, then the server assumes those are the user's new cumulative skills. (e.g, if the user had skill A, B, C, but you supply the mutation query with skill D, the user will now only have skill D).
+- You can make the user lose all their skills by supplying an empty array for skills.
 
 ### Getting the frequency of skills with filtering
 
