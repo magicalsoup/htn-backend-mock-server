@@ -13,10 +13,14 @@ datasource db {
 
 model User {
   id    Int     @id @default(autoincrement())
+  salt String @unique
+  QRCodeHash String @unique
   name  String
   company String
   email String 
   phone String  
+  signedIn Boolean
+  signedInAt DateTime?
   skills Skill[]
 }
 

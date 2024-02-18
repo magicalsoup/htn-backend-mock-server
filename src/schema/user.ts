@@ -1,5 +1,6 @@
 import { builder } from '../builder'
 import { prisma } from '../db'
+import { GraphQLError } from 'graphql'
 
 builder.prismaObject('User', {
   fields: (t) => ({
@@ -8,6 +9,10 @@ builder.prismaObject('User', {
     company: t.exposeString('company'),
     email: t.exposeString('email'),
     phone: t.exposeString('phone'),
+    salt: t.exposeString('salt'), // ok to expose, also needed for client side (or somewhere) to generate the QRcode
+    QRCodeHash: t.exposeString('QRCodeHash'), // ok to expose, since it's really just a unique identified for a user, does not contain sensitive information
+    signedIn: t.exposeBoolean('signedIn'),
+    signedInAt: t.expose('signedInAt', { type: 'DateTime', nullable: true }),
     skills: t.relation('skills'),
   }),
 })
@@ -94,6 +99,36 @@ builder.mutationFields((t) => ({
         },
         where: { id: args.id }
       })
+    }
+  }),
+  signInUser: t.prismaField({
+    type: 'User',
+    args: {
+      QRCodeHash: t.arg.string({ required: true }),
+    },
+    resolve: async (query, parent, args) => {
+      const user = await prisma.user.findUnique({where: { QRCodeHash: args.QRCodeHash }})
+      const currentDatetime = new Date(Date.now())
+
+      if (!user) {
+        return Promise.reject(
+          new GraphQLError(`User with hash ${args.QRCodeHash} not found!`)
+        )
+      }
+
+      // maybe should throw error here
+      if (user.signedIn) {
+        return user; // no need to update
+      }
+
+      return prisma.user.update({
+        ...query,
+        data: {
+          signedIn: true,
+          signedInAt: currentDatetime.toISOString()
+        },
+        where: { QRCodeHash: args.QRCodeHash }
+      });
     }
   })
 }))
