@@ -56,14 +56,16 @@ The schema that specifies the API operations of the GraphQL server is defined in
 query {
   allUsers {
     id
-    name,
-    company,
-    email,
-    phone,
+    name
+    company
+    email
+    salt
+    QRCodeHash
+    phone
     skills {
-      id,
-      skill,
-      rating,
+      id
+      skill
+      rating
       userId
     }
   }
@@ -77,14 +79,16 @@ query {
 ```graphql
 query {
   user(id: FOO) {
-    name,
-    company,
-    email,
-    phone,
+    name
+    company
+    email
+    salt
+    QRCodeHash
+    phone
     skills {
-      id,
-      skill,
-      rating,
+      id
+      skill
+      rating
       userId
     }
   }
@@ -97,21 +101,23 @@ query {
 ```graphql
 mutation {
   updateUser(id: FOO, data: { name: "Sarah", phone: "+1 (555) 123 4567", skills: [{skill: "C++", rating: 5}] }) {
-    id,
-    name,
-    company,
-    email,
-    phone,
+    id
+    name
+    company
+    email
+    phone
     skills {
-      id,
-      skill,
-      rating,
+      id
+      skill
+      rating
       userId
     }
   }
 }
 ```
 
+#### Note
+- you are not able to update the user's salt or QRCode hash (on purpose, for obvious reasons)
 
 #### Notes
 - If you do not supply skills, then the server assumes no updates to skills.
@@ -123,7 +129,7 @@ mutation {
 ```graphql
 query {
   skillByFrequency(minFrequency: 5, maxFrequency: 10) {
-    skill,
+    skill
     _count {
       _all
     }
@@ -131,4 +137,30 @@ query {
 }
 ```
 Note that the frequency of each skill is stored in `_all`. 
+</details>
 
+## Improvements
+
+### Sign in Users
+
+You can sign in users using their QRCodeHash. You can query their QRCodeHash when getting a User information, or scanning the QRCode that correspondes to their QRCodeHash. The QRCode can be made from the salt and user info (see seed.ts) to see how their QRCode hashes are generated.
+
+```graphql
+mutation {
+  signInUser(QRCodeHash: "2031b72d27f923adfb478f365de778f38c84091f83eb956925c261f9248c79b8") {
+    id,
+    name
+    email
+    signedIn
+    signedInAt
+    skills {
+      id
+      rating
+      skill
+    }
+  }
+}
+
+#### Notes
+- will return the user (with nothing changed) if the user is already signed in.
+- will return an error if no user matches the QRCode hash
