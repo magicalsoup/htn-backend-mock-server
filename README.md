@@ -139,7 +139,7 @@ query {
 Note that the frequency of each skill is stored in `_all`. 
 </details>
 
-## Improvements
+## Enchancements
 
 ### Sign in Users
 
@@ -160,7 +160,23 @@ mutation {
     }
   }
 }
+```
 
 #### Notes
 - will return the user (with nothing changed) if the user is already signed in.
 - will return an error if no user matches the QRCode hash
+
+### User sign in data
+gets how many users signed in between `startTime` and `endTime`, by the hour
+
+```graphql
+query {
+  signInData(startTime: "2024-02-18T19:15:20.559Z", endTime: "2024-02-18T23:15:20.559Z") {
+    hour
+    numberOfUsers
+  }
+}
+```
+
+#### Notes
+- both `startTime` and `endTime` must be specified in ISO 8601 date time format

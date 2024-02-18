@@ -10,8 +10,14 @@ type Mutation {
 
 type Query {
   allUsers: [User!]!
+  signInData(endTime: DateTime!, startTime: DateTime!): [SignInData!]!
   skillsByFrequency(maxFrequency: Int!, minFrequency: Int!): [SkillFrequency!]!
   user(id: Int!): User
+}
+
+type SignInData {
+  hour: String!
+  numberOfUsers: Int!
 }
 
 type Skill {

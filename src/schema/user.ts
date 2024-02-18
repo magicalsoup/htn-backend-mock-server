@@ -1,6 +1,9 @@
+import { DateTime } from 'graphql-scalars/typings/typeDefs'
 import { builder } from '../builder'
 import { prisma } from '../db'
-import { GraphQLError } from 'graphql'
+import { GraphQLError, isNullableType } from 'graphql'
+import { Prisma } from '@prisma/client'
+import { MaybePromise } from '@pothos/core'
 
 builder.prismaObject('User', {
   fields: (t) => ({
@@ -15,6 +18,13 @@ builder.prismaObject('User', {
     signedInAt: t.expose('signedInAt', { type: 'DateTime', nullable: true }),
     skills: t.relation('skills'),
   }),
+})
+
+builder.objectType('SignInData', {
+  fields: (t) => ({
+    hour: t.exposeString('hour'),
+    numberOfUsers: t.exposeInt('numberOfUsers')
+  })
 })
 
 const SkillCreateInput = builder.inputType('SkillCreateInput', {
@@ -34,6 +44,7 @@ const UserUpdateInput = builder.inputType('UserUpdateInput', {
   })
 })
 
+
 builder.queryFields((t) => ({
   allUsers: t.prismaField({
     type: ['User'],
@@ -51,6 +62,28 @@ builder.queryFields((t) => ({
         where: { id: args.id }
       })
   }),
+  signInData: t.field({
+    type: ['SignInData'],
+    args: {
+      startTime: t.arg({ type: 'DateTime', required: true }),
+      endTime: t.arg({ type: 'DateTime', required: true }),
+    },
+    resolve: async (query, args) => {
+      // have to use RAW sql because 
+      // have to /1000 because sqlite stores in ms instead of s for unix timestamps
+      // also need under the hood sqlite3 stores Datetime as unixtime stamps, so have to convert
+      //   before using time format
+      const rawSQL = Prisma.sql`SELECT hour, CAST(COUNT(hour) as REAL) as numberOfUsers from 
+      (SELECT 
+          strftime('%H', datetime(signedInAt/1000, 'unixepoch')) as hour FROM user
+          WHERE signedIn and signedInAt >= ${args.startTime} and signedInAt <= ${args.endTime}
+      ) GROUP BY hour
+      `
+      const data: MaybePromise<readonly MaybePromise<{ hour: string; numberOfUsers: number; }>[]>= await prisma.$queryRaw(rawSQL)
+      // console.log(data)
+      return data
+    }
+  })
 }))
 
 builder.mutationFields((t) => ({
@@ -61,8 +94,6 @@ builder.mutationFields((t) => ({
       data: t.arg({ type: UserUpdateInput }),
     },
     resolve: async (query, parent, args) => {
-
-      
       // data is not unique, turns out users can have same skill with same rating
 
       // could do upsert (not implemented)
@@ -108,7 +139,7 @@ builder.mutationFields((t) => ({
     },
     resolve: async (query, parent, args) => {
       const user = await prisma.user.findUnique({where: { QRCodeHash: args.QRCodeHash }})
-      const currentDatetime = new Date(Date.now())
+      const currentDatetime = new Date().toISOString()
 
       if (!user) {
         return Promise.reject(
@@ -125,7 +156,7 @@ builder.mutationFields((t) => ({
         ...query,
         data: {
           signedIn: true,
-          signedInAt: currentDatetime.toISOString()
+          signedInAt: new Date(),
         },
         where: { QRCodeHash: args.QRCodeHash }
       });
