@@ -2,7 +2,7 @@ import { createYoga } from 'graphql-yoga'
 import { createServer } from 'http'
 import { schema } from './schema'
 
-const yoga = createYoga({
+export const yoga = createYoga({
   graphqlEndpoint: '/',
   schema,
   context: (req) => {
@@ -12,7 +12,7 @@ const yoga = createYoga({
   },
 })
 
-const server = createServer(yoga)
+export const server = createServer(yoga)
 
 server.listen(4000, () => {
   console.log(`\
