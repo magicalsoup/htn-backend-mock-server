@@ -7,6 +7,7 @@ This is a graphql server, written using prisma, pothos graphql, and typescript. 
 - [Getting Started](#getting-started)
 - [Using the GraphQL API](#using-the-graphql-api)
 - [Enchancements](#Enchancements)
+- [Tests](#running-tests)
 
 ## Getting started
 
@@ -72,7 +73,6 @@ query {
 }
 ```
 
-<details><summary><strong>See more API operations</strong></summary>
 
 ### Retrieve the information of a specific user
 
@@ -128,7 +128,7 @@ mutation {
 
 ```graphql
 query {
-  skillByFrequency(minFrequency: 5, maxFrequency: 10) {
+  skillByFrequency(minFrequency: 23, maxFrequency: 28) {
     skill
     _count {
       _all
@@ -137,7 +137,6 @@ query {
 }
 ```
 Note that the frequency of each skill is stored in `_all`. 
-</details>
 
 ## Enchancements
 
@@ -147,7 +146,7 @@ You can sign in users using their QRCodeHash. You can query their QRCodeHash whe
 
 ```graphql
 mutation {
-  signInUser(QRCodeHash: "2031b72d27f923adfb478f365de778f38c84091f83eb956925c261f9248c79b8") {
+  signInUser(QRCodeHash: "2031b72d27f923adfb478f365de778f38c84091f83eb956925c261f9248c79b8", signedInAt: "2024-02-19T23:15:01.306Z") {
     id,
     name
     email
@@ -164,7 +163,8 @@ mutation {
 
 #### Notes
 - will return the user (with nothing changed) if the user is already signed in.
-- will return an error if no user matches the QRCode hash
+- will return an error message and data will be null if no user matches the QRCode hash
+- `signedInAt` must be in 8601 ISO date time format
 
 ### User sign in data
 gets how many users signed in between `startTime` and `endTime`, by the hour
@@ -179,4 +179,14 @@ query {
 ```
 
 #### Notes
-- both `startTime` and `endTime` must be specified in ISO 8601 date time format
+- both `startTime` and `endTime` must be in ISO 8601 date time format
+
+## Running Tests
+
+You can run the tests by simply typing 
+
+```
+npm test
+```
+
+in the CLI. Note that you must have already seeded the database before running this command.
