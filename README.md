@@ -78,7 +78,7 @@ query {
 
 ```graphql
 query {
-  user(id: FOO) {
+  user(id: Int) {
     name
     company
     email
@@ -100,7 +100,7 @@ query {
 
 ```graphql
 mutation {
-  updateUser(id: FOO, data: { name: "Sarah", phone: "+1 (555) 123 4567", skills: [{skill: "C++", rating: 5}] }) {
+  updateUser(id: Int, data: { name: "Sarah", phone: "+1 (555) 123 4567", skills: [{skill: "C++", rating: 5}] }) {
     id
     name
     company
@@ -128,7 +128,7 @@ mutation {
 
 ```graphql
 query {
-  skillByFrequency(minFrequency: 23, maxFrequency: 28) {
+  skillByFrequency(minFrequency: Int, maxFrequency: Int) {
     skill
     _count {
       _all
@@ -150,6 +150,7 @@ mutation {
     id,
     name
     email
+    company
     signedIn
     signedInAt
     skills {
