@@ -110,7 +110,7 @@ builder.mutationFields((t) => ({
           where: { userId: args.id } 
         })
 
-        args.data.skills.forEach(async (skill) => {
+        for (const skill of args.data.skills) {
           await prisma.skill.create({
             data: {
               skill: skill.skill,
@@ -118,9 +118,10 @@ builder.mutationFields((t) => ({
               userId: args.id,
             }
           });
-        })
+        }
       }
-   
+
+      
       return prisma.user.update({
         data: {
           name: args.data?.name?? undefined,
@@ -136,10 +137,10 @@ builder.mutationFields((t) => ({
     type: 'User',
     args: {
       QRCodeHash: t.arg.string({ required: true }),
+      signedInAt: t.arg({ type: 'DateTime', required: true })
     },
     resolve: async (query, parent, args) => {
-      const user = await prisma.user.findUnique({where: { QRCodeHash: args.QRCodeHash }})
-      const currentDatetime = new Date().toISOString()
+      const user = await prisma.user.findUnique({ where: { QRCodeHash: args.QRCodeHash } })
 
       if (!user) {
         return Promise.reject(
@@ -156,10 +157,27 @@ builder.mutationFields((t) => ({
         ...query,
         data: {
           signedIn: true,
-          signedInAt: new Date(),
+          signedInAt: args.signedInAt
         },
         where: { QRCodeHash: args.QRCodeHash }
       });
+    }
+  }),
+  // this endpoint is not intended for hackers, just for backend team for tests
+  signOutUser: t.prismaField({
+    type: 'User',
+    args: {
+      QRCodeHash: t.arg.string({ required: true }),
+    },
+    resolve: async (query, parent, args) => {
+      return prisma.user.update({
+        ...query,
+        data: {
+          signedIn: false,
+          signedInAt: null,
+        },
+        where : { QRCodeHash: args.QRCodeHash }
+      })
     }
   })
 }))

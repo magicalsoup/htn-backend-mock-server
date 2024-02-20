@@ -9,7 +9,7 @@
     "build:schema": "ts-node src/schema/index.ts",
     "generate": "npm -s run generate:prisma",
     "generate:prisma": "prisma generate",
-    "test": "jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles --verbose"
   },
   "prettier": {
     "semi": false,
