@@ -1,6 +1,6 @@
 import { builder } from '../builder'
 import { prisma } from '../db'
-import { GraphQLError, isNullableType } from 'graphql'
+import { GraphQLError } from 'graphql'
 import { Prisma } from '@prisma/client'
 import { MaybePromise } from '@pothos/core'
 
@@ -43,13 +43,12 @@ const UserUpdateInput = builder.inputType('UserUpdateInput', {
   })
 })
 
-
 builder.queryFields((t) => ({
-  allUsers: t.prismaField({
+  allUsers: t.prismaField({ // information for all users
     type: ['User'],
     resolve: (query) => prisma.user.findMany({...query})
   }),
-  user: t.prismaField({
+  user: t.prismaField({ // information for single user
     type: 'User',
     nullable: true,
     args: {
@@ -96,9 +95,8 @@ builder.mutationFields((t) => ({
       // data is not unique, turns out users can have same skill with same rating
 
       // could do upsert (not implemented)
-      //  but then would require knowing skill id (since this is the only unique identifier)
-      //  which is not ideal, also user would need to input whether skills are gained or lost 
-      //  since alternative solution would be to query and check which would be inefficient      
+      //  but user would need to input whether skills are gained or lost 
+      //     would require a lot more queries to check    
 
       // to allow for users to lose skills, if the user inputs a set of skills in the body (not null)
       //   then we assume those are the new skills for the user (see tests for clarification)
@@ -122,7 +120,6 @@ builder.mutationFields((t) => ({
         }
       }
 
-      
       return prisma.user.update({
         data: {
           name: args.data?.name?? undefined,
@@ -164,7 +161,7 @@ builder.mutationFields((t) => ({
       });
     }
   }),
-  // this endpoint is not intended for hackers, just for backend team for tests
+  // this endpoint is not intended for hackers, just for backend team for tests (see test file)
   signOutUser: t.prismaField({
     type: 'User',
     args: {

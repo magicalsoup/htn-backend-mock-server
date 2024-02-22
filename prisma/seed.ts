@@ -1,12 +1,12 @@
 import { PrismaClient, Prisma } from '@prisma/client'
 import { readFileSync } from "fs"
 import { Skill } from "../src/lib/types"
+import { getUniqueSkills } from "../src/lib/util"
 import { randomBytes, createHash } from "crypto"
 
 const prisma = new PrismaClient()
 
 const ALL_USER_DATA = JSON.parse(readFileSync("./prisma/mockUserData.json", 'utf-8'));
-
 
 const userData: Prisma.UserCreateInput[] = ALL_USER_DATA.map((user) => {
   const salt = randomBytes(20).toString('hex')
@@ -19,22 +19,7 @@ const userData: Prisma.UserCreateInput[] = ALL_USER_DATA.map((user) => {
   // need to do this because data is not unique, a user can have same skill and
   //  same rating
   // we throw away the any ocurrence beyond the first of the skill
-  const uniqueSkills = user.skills.reduce((arr: Skill[] , skill: Skill) => {
-    let hasSkill = false;
-    
-    for(const prevskill of arr) {
-      if (prevskill.skill == skill.skill) {
-        hasSkill = true;
-        break;
-      }
-    }
-
-    if (!hasSkill) {
-      arr.push(skill)
-    }
-
-    return arr;
-  }, [])
+  const uniqueSkills =  getUniqueSkills(user.skills)
 
   return {
     name: user.name,

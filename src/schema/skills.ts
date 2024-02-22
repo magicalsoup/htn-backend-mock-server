@@ -3,7 +3,6 @@ import { prisma } from '../db'
 
 builder.prismaObject('Skill', {
     fields: (t) => ({
-        id: t.exposeInt('id'),
         skill: t.exposeString('skill'),
         rating: t.exposeInt('rating'),
         user: t.relation('user'),
