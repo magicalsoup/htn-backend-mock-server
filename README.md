@@ -175,6 +175,45 @@ query {
 #### Notes
 - both `startTime` and `endTime` must be in ISO 8601 date time format
 
+### Get all events
+You can get all the events of the hackathon with the following query
+```graphql
+query {
+  allEvents {
+    event
+  }
+}
+```
+
+### Sign in to Event
+You can sign in a user to an event with the following query
+```graphql
+query {
+  eventSignIn(userQRHash: "", event: "cohere") {
+    events {
+      event
+    }
+  }
+}
+```
+
+#### Notes
+- It returns an user object, so you can query other user fields such as `name`, `company`, `QRCodeHash`, etc.
+- It will give an error message and return null if user with hash `userQRHash` does not exist
+- It will given an error message and return null if no such event `event` exists
+
+### User events
+you can find out what events the user has signed in to using the user query below
+```graphql
+query {
+  user(id: 1) {
+    events {
+      event
+    }
+  }
+}
+```
+
 ## Running Tests
 
 You can run the tests by simply typing 
