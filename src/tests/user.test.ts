@@ -1,8 +1,8 @@
 import {describe, expect, test} from "@jest/globals"
 import { server } from "../server"
-import { executeQuery, ALL_USER_DATA } from "./util";
+import { executeQuery, MODIFIED_ALL_USER_DATA } from "./util";
 
-const FIRST_USER = ALL_USER_DATA[0]
+const FIRST_USER = MODIFIED_ALL_USER_DATA[0]
 
 async function resetFirstUser() {
     const query = `mutation {
@@ -136,7 +136,7 @@ describe('get all users endpoint', () => {
             }
         }`
 
-        const expectedUsers = ALL_USER_DATA
+        const expectedUsers = MODIFIED_ALL_USER_DATA
 
         await executeQuery(query, 'POST').then(res => {
             expect(res.status).toEqual(200)

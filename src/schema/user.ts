@@ -1,4 +1,3 @@
-import { DateTime } from 'graphql-scalars/typings/typeDefs'
 import { builder } from '../builder'
 import { prisma } from '../db'
 import { GraphQLError, isNullableType } from 'graphql'
@@ -69,9 +68,9 @@ builder.queryFields((t) => ({
       endTime: t.arg({ type: 'DateTime', required: true }),
     },
     resolve: async (query, args) => {
-      // have to use RAW sql because 
+      // have to use RAW sql because prisma doesn't support sqlite datetime functions
       // have to /1000 because sqlite stores in ms instead of s for unix timestamps
-      // also need under the hood sqlite3 stores Datetime as unixtime stamps, so have to convert
+      // under the hood sqlite3 stores Datetime as unixtime stamps, so have to convert
       //   before using time format
       const rawSQL = Prisma.sql`SELECT hour, CAST(COUNT(hour) as REAL) as numberOfUsers from 
       (SELECT 
@@ -99,17 +98,19 @@ builder.mutationFields((t) => ({
       // could do upsert (not implemented)
       //  but then would require knowing skill id (since this is the only unique identifier)
       //  which is not ideal, also user would need to input whether skills are gained or lost 
-      //  since alternative solution would be to query and check which would be inefficient
-
+      //  since alternative solution would be to query and check which would be inefficient      
 
       // to allow for users to lose skills, if the user inputs a set of skills in the body (not null)
-      //   then we assume those are the new skills for the user
-      // otherwise we assume no changes for skills
+      //   then we assume those are the new skills for the user (see tests for clarification)
+      //   otherwise we assume no changes for skills
+      // essentially we assume the new skills are the culmalative skills for the user
       if (args.data?.skills) {
         await prisma.skill.deleteMany({
           where: { userId: args.id } 
         })
 
+        // createMany is not supported by sqlite and prisma
+        //  see https://www.prisma.io/docs/orm/reference/prisma-client-reference#remarks-11
         for (const skill of args.data.skills) {
           await prisma.skill.create({
             data: {
@@ -148,7 +149,7 @@ builder.mutationFields((t) => ({
         )
       }
 
-      // maybe should throw error here
+      // didn't throw error, frontend can check if user is already signed in
       if (user.signedIn) {
         return user; // no need to update
       }

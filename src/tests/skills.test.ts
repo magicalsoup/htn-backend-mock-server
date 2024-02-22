@@ -1,10 +1,10 @@
 import {describe, expect, test} from "@jest/globals"
 import { server } from "../server"
-import { executeQuery, ALL_USER_DATA } from "./util";
+import { executeQuery, MODIFIED_ALL_USER_DATA } from "./util";
 
 function getAllSkillsWithFrequencyBetween(minFrequency: number, maxFrequency: number) {
     let frequency = new Map<string, number>()
-    for (const user of ALL_USER_DATA) {
+    for (const user of MODIFIED_ALL_USER_DATA) {
         for (const skill of user.skills) {
             frequency.set(skill.skill, (frequency.get(skill.skill)?? 0) + 1)
         }

@@ -13,7 +13,6 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Skill" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "skill" TEXT NOT NULL,
     "rating" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
@@ -25,3 +24,6 @@ CREATE UNIQUE INDEX "User_salt_key" ON "User"("salt");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_QRCodeHash_key" ON "User"("QRCodeHash");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Skill_skill_userId_key" ON "Skill"("skill", "userId");
