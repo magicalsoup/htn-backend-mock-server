@@ -136,7 +136,7 @@ Note that the frequency of each skill is stored in `_all`.
 
 ### Sign in Users
 
-You can sign in users using their QRCodeHash. You can query their QRCodeHash when getting a User information, or scanning the QRCode that correspondes to their QRCodeHash. The QRCode can be made from the salt and user info (see seed.ts) to see how their QRCode hashes are generated.
+You can sign in users using their QRCodeHash. You can query their QRCodeHash when getting a User information, or scanning the QRCode that correspondes to their QRCodeHash. The QRCode can be made from the salt and user info (see seed.ts to see how their QRCode hashes are generated).
 
 ```graphql
 mutation {
@@ -189,7 +189,7 @@ query {
 You can sign in a user to an event with the following query
 ```graphql
 query {
-  eventSignIn(userQRHash: "", event: "cohere") {
+  eventSignIn(userQRHash: "2031b72d27f923adfb478f365de778f38c84091f83eb956925c261f9248c79b8", event: "cohere") {
     events {
       event
     }
@@ -203,7 +203,7 @@ query {
 - It will given an error message and return null if no such event `event` exists
 
 ### User events
-you can find out what events the user has signed in to using the user query below
+you can find out what events the user has signed in to using the user query
 ```graphql
 query {
   user(id: 1) {
