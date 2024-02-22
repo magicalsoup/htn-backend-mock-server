@@ -31,4 +31,3 @@ model Skill {
   userId Int
   @@unique([skill, userId])
 }
-

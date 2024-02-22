@@ -64,7 +64,6 @@ query {
     QRCodeHash
     phone
     skills {
-      id
       skill
       rating
       userId
@@ -86,7 +85,6 @@ query {
     QRCodeHash
     phone
     skills {
-      id
       skill
       rating
       userId
@@ -107,7 +105,6 @@ mutation {
     email
     phone
     skills {
-      id
       skill
       rating
       userId
@@ -115,11 +112,8 @@ mutation {
   }
 }
 ```
-
-#### Note
-- you are not able to update the user's salt or QRCode hash (on purpose, for obvious reasons)
-
 #### Notes
+- You are not able to update the user's salt or QRCode hash (on purpose, for obvious reasons)
 - If you do not supply skills, then the server assumes no updates to skills.
 - If you supply a non-null value to skills, then the server assumes those are the user's new cumulative skills. (e.g, if the user had skill A, B, C, but you supply the mutation query with skill D, the user will now only have skill D).
 - You can make the user lose all their skills by supplying an empty array for skills.
@@ -154,7 +148,6 @@ mutation {
     signedIn
     signedInAt
     skills {
-      id
       rating
       skill
     }
