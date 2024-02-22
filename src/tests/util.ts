@@ -22,7 +22,7 @@ export async function executeQuery(query: string, type: string) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            query: query
+            query: query,
         })
     })
     return result

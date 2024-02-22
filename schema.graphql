@@ -8,7 +8,8 @@ type Event {
 }
 
 type Mutation {
-  eventSignIn(QRCodeHash: String!, event: String!): User
+  eventSignIn(event: String!, userQRHash: String!): User
+  eventSignOut(event: String!, userQRHash: String!): User
   signInUser(QRCodeHash: String!, signedInAt: DateTime!): User!
   signOutUser(QRCodeHash: String!): User!
   updateUser(data: UserUpdateInput, id: Int!): User!
