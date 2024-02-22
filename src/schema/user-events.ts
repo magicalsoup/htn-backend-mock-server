@@ -2,6 +2,7 @@ import { GraphQLError } from 'graphql'
 import { builder } from '../builder'
 import { prisma } from '../db'
 
+// object ref definitions
 builder.prismaObject('UserEvents', {
     fields: (t) => ({
         event: t.exposeString('event'),
@@ -9,6 +10,7 @@ builder.prismaObject('UserEvents', {
     })
 })
 
+// mutations
 builder.mutationFields((t) => ({
     eventSignIn: t.prismaField({
         type: 'User',
@@ -41,7 +43,7 @@ builder.mutationFields((t) => ({
                 )
             }
 
-            // doesn't do anything if user has signed in before
+            // doesn't do anything if user has signed in to this event before
             await prisma.userEvents.upsert({
                 where: { 
                     event_userQRHash: {
@@ -61,7 +63,7 @@ builder.mutationFields((t) => ({
             })
         }
     }),
-    // not really used for hackers, more for backend team for tests
+    // this endpoint is not intended for hackers, just for backend team for tests (see test file)
     eventSignOut: t.prismaField({
         type: 'User',
         nullable: true,

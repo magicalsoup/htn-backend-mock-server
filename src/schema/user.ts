@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql'
 import { Prisma } from '@prisma/client'
 import { MaybePromise } from '@pothos/core'
 
+// object ref definitions
 builder.prismaObject('User', {
   fields: (t) => ({
     id: t.exposeInt('id'),
@@ -44,6 +45,7 @@ const UserUpdateInput = builder.inputType('UserUpdateInput', {
   })
 })
 
+// queries
 builder.queryFields((t) => ({
   allUsers: t.prismaField({ // information for all users
     type: ['User'],
@@ -85,6 +87,8 @@ builder.queryFields((t) => ({
   })
 }))
 
+
+// mutations
 builder.mutationFields((t) => ({
   updateUser: t.prismaField({
     type: 'User',

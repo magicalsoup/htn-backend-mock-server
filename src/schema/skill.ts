@@ -1,6 +1,7 @@
 import { builder } from '../builder'
 import { prisma } from '../db'
 
+// object ref definitions
 builder.prismaObject('Skill', {
     fields: (t) => ({
         skill: t.exposeString('skill'),
@@ -24,6 +25,7 @@ builder.objectType('SkillFrequency', {
     })
 })
 
+// queries
 builder.queryFields((t) => ({
     skillsByFrequency: t.field({
         type: ['SkillFrequency'],
@@ -31,6 +33,10 @@ builder.queryFields((t) => ({
             minFrequency: t.arg.int({ required: true }),
             maxFrequency: t.arg.int({ required: true }),
         },
+        // can't use having, it doesn't support _count (or aggregates) yet
+        //  see https://github.com/prisma/prisma/issues/6570
+        // so we use a hacky solution with .filter
+        // still works
         resolve: async (query, args) => {
             return (await prisma.skill.groupBy({
                 by: 'skill',

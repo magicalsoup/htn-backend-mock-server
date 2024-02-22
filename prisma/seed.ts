@@ -1,13 +1,10 @@
 import { PrismaClient, Prisma } from '@prisma/client'
 import { readFileSync } from "fs"
-import { Skill } from "../src/lib/types"
 import { getUniqueSkills } from "../src/lib/util"
 import { randomBytes, createHash } from "crypto"
+import { ALL_USER_DATA, EVENT_DATA } from '../src/lib/util'
 
 const prisma = new PrismaClient()
-
-const ALL_USER_DATA = JSON.parse(readFileSync("./prisma/mockUserData.json", 'utf-8'))
-const EVENT_DATA = JSON.parse(readFileSync("./prisma/mockEventData.json", 'utf-8'))
 
 const eventData: Prisma.EventCreateInput[] = EVENT_DATA
 

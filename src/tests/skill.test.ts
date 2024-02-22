@@ -49,6 +49,20 @@ describe('get skill frequency endpoint', () => {
             return res.json()
         }).then(res => expect(res.data.skillsByFrequency).toEqual(expected))
     })
+    test('test if we can get just the skill names from frequency', async () => {
+        const query = `query {
+            skillsByFrequency(minFrequency: 23, maxFrequency: 28) {
+                skill
+            }
+        }`
+        const expected = getAllSkillsWithFrequencyBetween(23, 28).map((skill) => {
+            return { skill: skill.skill }
+        })
+        await executeQuery(query, 'POST').then(res => {
+            expect(res.status).toEqual(200)
+            return res.json()
+        }).then(res => expect(res.data.skillsByFrequency).toEqual(expected))
+    })
 })
 
 server.close()

@@ -1,6 +1,7 @@
 import {describe, expect, test} from "@jest/globals"
 import { server } from "../server"
-import { executeQuery, EVENT_DATA } from "./util";
+import { executeQuery } from "./util";
+import { EVENT_DATA } from "../lib/util";
 
 describe('all events endpoint', () => {
     test('test if endpoint returns all events correctly', async () => {
