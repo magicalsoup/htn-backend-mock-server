@@ -6,7 +6,10 @@ import { randomBytes, createHash } from "crypto"
 
 const prisma = new PrismaClient()
 
-const ALL_USER_DATA = JSON.parse(readFileSync("./prisma/mockUserData.json", 'utf-8'));
+const ALL_USER_DATA = JSON.parse(readFileSync("./prisma/mockUserData.json", 'utf-8'))
+const EVENT_DATA = JSON.parse(readFileSync("./prisma/mockEventData.json", 'utf-8'))
+
+const eventData: Prisma.EventCreateInput[] = EVENT_DATA
 
 const userData: Prisma.UserCreateInput[] = ALL_USER_DATA.map((user) => {
   const salt = randomBytes(20).toString('hex')
@@ -45,6 +48,14 @@ async function main() {
     })
     console.log(`Created user with id: ${user.id}`)
   }
+
+  for (const e of eventData) {
+    const event = await prisma.event.create({
+      data: e
+    })
+    console.log(`Created event ${event.event}`)
+  }
+
   console.log(`Seeding finished.`)
 }
 

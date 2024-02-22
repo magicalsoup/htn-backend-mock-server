@@ -1,0 +1,17 @@
+[
+    {
+        "event": "cohere"
+    }, 
+    {
+        "event": "hootsuite"
+    },
+    {
+        "event": "microsoft"
+    },
+    {
+        "event": "firebase"
+    },
+    {
+        "event": "intro-to-graphql"
+    }
+]

@@ -16,6 +16,7 @@ builder.prismaObject('User', {
     signedIn: t.exposeBoolean('signedIn'),
     signedInAt: t.expose('signedInAt', { type: 'DateTime', nullable: true }),
     skills: t.relation('skills'),
+    events: t.relation('events')
   }),
 })
 
@@ -146,7 +147,7 @@ builder.mutationFields((t) => ({
         )
       }
 
-      // didn't throw error, frontend can check if user is already signed in
+      // frontend can check if user is already signed in, so will not throw error here
       if (user.signedIn) {
         return user; // no need to update
       }
@@ -177,5 +178,5 @@ builder.mutationFields((t) => ({
         where : { QRCodeHash: args.QRCodeHash }
       })
     }
-  })
+  }),
 }))

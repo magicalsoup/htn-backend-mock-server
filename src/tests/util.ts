@@ -13,6 +13,8 @@ export const MODIFIED_ALL_USER_DATA = JSON.parse(readFileSync("./prisma/mockUser
     }
 })
 
+export const EVENT_DATA = JSON.parse(readFileSync("./prisma/mockEventData.json", 'utf-8'))
+
 export async function executeQuery(query: string, type: string) {
     const result = await yoga.fetch(API_ENDPOINT, {
         method: type,

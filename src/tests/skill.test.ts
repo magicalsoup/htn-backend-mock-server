@@ -2,6 +2,7 @@ import {describe, expect, test} from "@jest/globals"
 import { server } from "../server"
 import { executeQuery, MODIFIED_ALL_USER_DATA } from "./util";
 
+// put in here instead of util because it's sepcific for skill tests
 function getAllSkillsWithFrequencyBetween(minFrequency: number, maxFrequency: number) {
     let frequency = new Map<string, number>()
     for (const user of MODIFIED_ALL_USER_DATA) {
