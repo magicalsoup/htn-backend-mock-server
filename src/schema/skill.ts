@@ -36,7 +36,9 @@ builder.queryFields((t) => ({
         // can't use having, it doesn't support _count (or aggregates) yet
         //  see https://github.com/prisma/prisma/issues/6570
         // so we use a hacky solution with .filter
-        // still works
+        // also reason why we have _count { _all } as the field for frequency
+        //  instead of just frequency (because we don't have to do .map and
+        //  the endpoint can be done in one query)
         resolve: async (query, args) => {
             return (await prisma.skill.groupBy({
                 by: 'skill',
