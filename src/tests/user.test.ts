@@ -249,69 +249,69 @@ describe('signInUser endpoint', () => {
 
     })
 
-    // test('test if signInData with the first 10 users is correct', async () => {
-    //     const signInTimes = [
-    //         "2024-02-19T23:15:01.306Z", 
-    //         "2024-02-19T23:16:01.306Z",
-    //         "2024-02-19T20:44:01.306Z",
-    //         "2024-02-19T22:42:01.306Z",
-    //         "2024-02-19T21:31:01.306Z",
-    //         "2024-02-19T20:28:01.306Z",
-    //         "2024-02-19T20:17:01.306Z",
-    //         "2024-02-19T20:50:01.306Z",
-    //         "2024-02-19T20:09:01.306Z",
-    //         "2024-02-19T19:27:01.306Z",
-    //     ]
-    //     const startTime = "2024-02-19T19:00:00.000Z"
-    //     const endTime = "2024-02-19T23:59:59.000Z"
-    //     for (let i = 0; i < 10; i++) {
-    //         const expected = {
-    //             signedIn: true,
-    //             signedInAt: signInTimes[i]
-    //         }
-    //         await testSignInUser(i+1, signInTimes[i], expected)
-    //     }
+    test('test if signInData with the first 10 users is correct', async () => {
+        const signInTimes = [
+            "2024-02-19T23:15:01.306Z", 
+            "2024-02-19T23:16:01.306Z",
+            "2024-02-19T20:44:01.306Z",
+            "2024-02-19T22:42:01.306Z",
+            "2024-02-19T21:31:01.306Z",
+            "2024-02-19T20:28:01.306Z",
+            "2024-02-19T20:17:01.306Z",
+            "2024-02-19T20:50:01.306Z",
+            "2024-02-19T20:09:01.306Z",
+            "2024-02-19T19:27:01.306Z",
+        ]
+        const startTime = "2024-02-19T19:00:00.000Z"
+        const endTime = "2024-02-19T23:59:59.000Z"
+        for (let i = 0; i < 10; i++) {
+            const expected = {
+                signed_in: true,
+                signed_in_at: signInTimes[i]
+            }
+            await testSignInUser(i+1, signInTimes[i], expected)
+        }
 
-    //     const dataQuery = `query {
-    //         signInData(startTime: "${startTime}", endTime: "${endTime}") {
-    //             hour
-    //             numberOfUsers
-    //         }
-    //     }`
+        const dataQuery = `query {
+            signInData(start_time: "${startTime}", end_time: "${endTime}") {
+                hour
+                num_of_users
+            }
+        }`
 
-    //     const expectedData = [
-    //         {
-    //             hour: "19",
-    //             numberOfUsers: 1,
-    //         },
-    //         {
-    //             hour: "20",
-    //             numberOfUsers: 5,
-    //         },
-    //         {
-    //             hour: "21",
-    //             numberOfUsers: 1,
-    //         },
-    //         {
-    //             hour: "22",
-    //             numberOfUsers: 1,
-    //         },
-    //         {
-    //             hour: "23",
-    //             numberOfUsers: 2,
-    //         }
-    //     ]
+        const expectedData = [
+            {
+                hour: "19",
+                num_of_users: 1,
+            },
+            {
+                hour: "20",
+                num_of_users: 5,
+            },
+            {
+                hour: "21",
+                num_of_users: 1,
+            },
+            {
+                hour: "22",
+                num_of_users: 1,
+            },
+            {
+                hour: "23",
+                num_of_users: 2,
+            }
+        ]
 
-    //     await executeQuery(dataQuery, 'POST').then(res => {
-    //         expect(res.status).toEqual(200)
-    //         return res.json()
-    //     }).then(res => expect(res.data.signInData).toEqual(expectedData));
+        await executeQuery(dataQuery, 'POST').then(res => {
+            expect(res.status).toEqual(200)
+            return res.json()
+        }).then(res => expect(res.data.signInData).toEqual(expectedData));
 
-    //     for (let id = 1; id <= 10; id++) {
-    //         await signOutUser(id)
-    //     }
+        for (let id = 1; id <= 10; id++) {
+            await signOutUser(id)
+        }
 
-    // })
+    })
 })
 
 
