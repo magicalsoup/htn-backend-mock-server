@@ -1,76 +1,48 @@
+type ActivityAggregate {
+  _all: Int!
+}
+
+type ActivityFrequency {
+  _count: ActivityAggregate!
+  activity_name: String!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
-type Event {
-  event: String!
-}
-
 type Mutation {
-  eventSignIn(event: String!, userQRHash: String!): User
-  eventSignOut(event: String!, userQRHash: String!): User
-  signInUser(QRCodeHash: String!, signedInAt: DateTime!): User!
-  signOutUser(QRCodeHash: String!): User!
+  scanUser(activity_category: String!, activity_name: String!, uid: Int!): Scan!
   updateUser(data: UserUpdateInput, id: Int!): User!
 }
 
 type Query {
-  allEvents: [Event!]!
   allUsers: [User!]!
-  signInData(endTime: DateTime!, startTime: DateTime!): [SignInData!]!
-  skillsByFrequency(maxFrequency: Int!, minFrequency: Int!): [SkillFrequency!]!
+  scans(activity_category: String, max_frequency: Int, min_frequency: Int): [ActivityFrequency!]!
   user(id: Int!): User
 }
 
-type SignInData {
-  hour: String!
-  numberOfUsers: Int!
-}
-
-type Skill {
-  rating: Int!
-  skill: String!
+type Scan {
+  activity_category: String!
+  activity_name: String!
+  scanned_at: DateTime!
   user: User!
-}
-
-type SkillAggregate {
-  _all: Int!
-}
-
-input SkillCreateInput {
-  rating: Int!
-  skill: String!
-}
-
-type SkillFrequency {
-  _count: SkillAggregate!
-  skill: String!
 }
 
 type User {
-  QRCodeHash: String!
-  company: String!
+  badge_code: String!
   email: String!
-  events: [UserEvents!]!
   id: Int!
   name: String
   phone: String!
-  salt: String!
-  signedIn: Boolean!
-  signedInAt: DateTime
-  skills: [Skill!]!
-}
-
-type UserEvents {
-  event: String!
-  user: User!
+  scans: [Scan!]!
+  updated_at: DateTime!
 }
 
 input UserUpdateInput {
-  company: String
+  badge_code: String
   email: String
   name: String
   phone: String
-  skills: [SkillCreateInput!]
 }

@@ -15,15 +15,12 @@ export const builder = new SchemaBuilder<{
     }
   }
   Objects: {
-    SignInData: {
-      hour: string,
-      numberOfUsers: number,
-    }
-    SkillAggregate: {
+    ActivityAggregate: {
       _all: number
     }
-    SkillFrequency: {
-      skill: string,
+    ActivityFrequency: {
+      activity_name: string,
+      activity_category: string,
       _count: {
         _all: number
       }
