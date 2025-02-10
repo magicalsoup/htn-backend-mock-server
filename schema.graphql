@@ -14,13 +14,16 @@ scalar DateTime
 
 type Mutation {
   scanUser(activity_category: String!, activity_name: String!, uid: Int!): Scan!
+  signInUser(qr_code_hash: String!, signed_in_at: DateTime!): User!
+  signOutUser(qr_code_hash: String!): User!
   updateUser(data: UserUpdateInput, id: Int!): User!
 }
 
 type Query {
   allUsers: [User!]!
   scans(activity_category: String, max_frequency: Int, min_frequency: Int): [ActivityFrequency!]!
-  user(id: Int!): User
+  signInData(end_time: DateTime!, start_time: DateTime!): [SignInData!]!
+  user(email: String, id: Int, qr_code_hash: String): User
 }
 
 type Scan {
@@ -30,13 +33,22 @@ type Scan {
   user: User!
 }
 
+type SignInData {
+  hour: String!
+  num_of_users: Int!
+}
+
 type User {
   badge_code: String!
   email: String!
   id: Int!
   name: String
   phone: String!
+  qr_code_hash: String!
+  salt: String!
   scans: [Scan!]!
+  signed_in: Boolean!
+  signed_in_at: DateTime
   updated_at: DateTime!
 }
 

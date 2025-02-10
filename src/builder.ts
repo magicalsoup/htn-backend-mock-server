@@ -15,9 +15,13 @@ export const builder = new SchemaBuilder<{
     }
   }
   Objects: {
+    SignInData: {
+      hour: string,
+      num_of_users: number,
+    },
     ActivityAggregate: {
       _all: number
-    }
+    },
     ActivityFrequency: {
       activity_name: string,
       activity_category: string,

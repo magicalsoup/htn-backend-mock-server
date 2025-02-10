@@ -1,5 +1,7 @@
+import { MaybePromise } from '@pothos/core';
 import { builder } from '../builder'
 import { prisma } from '../db'
+import { Prisma } from '@prisma/client';
 
 builder.prismaObject('Scan', {
   fields: (t) => ({
@@ -19,7 +21,6 @@ builder.mutationFields((t) => ({
       activity_category: t.arg.string({ required: true})
     },
     resolve: async (query, parent, args) => {
-
       // update user updatedAt
       await prisma.user.update({
         data: {
@@ -81,5 +82,6 @@ builder.queryFields((t) => ({
               (args.max_frequency? scan._count._all <= args.max_frequency : true) &&
               args.activity_category? scan.activity_category === args.activity_category : true)
       }
-  })
+  }),
+
 }))

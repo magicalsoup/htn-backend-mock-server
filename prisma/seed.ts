@@ -1,14 +1,21 @@
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma, User } from '@prisma/client'
 import { ALL_USER_DATA } from '../src/lib/util'
-
+import { randomBytes, createHash } from "crypto"
 const prisma = new PrismaClient()
 
 const userData: Prisma.UserCreateInput[] = ALL_USER_DATA.map((user) => {
+  const salt = randomBytes(20).toString('hex')
+  const qr_code_hash = createHash('sha256')
+    .update(user.name + user.email + user.phone + salt).digest('hex')
+
   return {
     name: user.name,
     email: user.email,
     phone: user.phone,
+    salt: salt,
+    qr_code_hash: qr_code_hash,
     badge_code: user.badge_code,
+    signed_in: false,
     updated_at: new Date().toISOString(),
     scans: {
        // need to do this because a lot of dates are not formatted correctly in iso8601 format

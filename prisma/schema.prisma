@@ -13,10 +13,14 @@ datasource db {
 
 model User {
   id    Int     @id @default(autoincrement())
+  salt String @unique
+  qr_code_hash String @unique
   name  String
   email String @unique 
   phone String  
   badge_code String @unique
+  signed_in Boolean
+  signed_in_at DateTime?
   scans Scan[]
   updated_at DateTime @updatedAt
 }
@@ -29,22 +33,3 @@ model Scan {
   user User @relation(fields: [uid], references: [id])
   @@unique([uid, activity_name, scanned_at]) // this is just because a user can scan multiple times for an event (as long as the times are different)
 }
-
-// model Skill {
-//   skill String 
-//   rating Int
-//   user User @relation(fields: [userId], references: [id])
-//   userId Int
-//   @@unique([skill, userId])
-// }
-
-// model UserEvents {
-//   event String
-//   user User @relation(fields: [userQRHash], references: [QRCodeHash])
-//   userQRHash String
-//   @@unique([event, userQRHash])
-// }
-
-// model Event {
-//   event String @id @unique
-// }

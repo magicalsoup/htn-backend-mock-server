@@ -27,7 +27,7 @@ npm install
 
 ### 2. Create and seed the database
 
-Run the following command to create the SQLite database file. This also creates the `User` and `Skill` tables that are defined in [`prisma/schema.prisma`](./prisma/schema.prisma):
+Run the following command to create the SQLite database file. This also creates the `User` and `Scan` tables that are defined in [`prisma/schema.prisma`](./prisma/schema.prisma):
 
 ```
 npx prisma migrate dev --name init
@@ -51,23 +51,24 @@ Navigate to [http://localhost:4000](http://localhost:4000) in your browser to ex
 
 The schema that specifies the API operations of the GraphQL server is defined in [`./schema.graphql`](./schema.graphql). Below are a number of operations that you can send to the API using the GraphQL Playground.
 
-### Retrieve all users info (including their skills)
+### Retrieve all users info 
 
 ```graphql
 query {
   allUsers {
     id
     name
-    company
+    badge_code
     email
-    salt
-    QRCodeHash
     phone
-    skills {
-      skill
-      rating
-      userId
+    salt
+    qr_code_hash
+    scans {
+      activity_name
+      activity_category
+      scanned_at
     }
+    updated_at
   }
 }
 ```
@@ -78,17 +79,19 @@ query {
 ```graphql
 query {
   user(id: Int) {
+    id
     name
-    company
+    badge_code
     email
-    salt
-    QRCodeHash
     phone
-    skills {
-      skill
-      rating
-      userId
+    salt
+    qr_code_hash
+    scans {
+      activity_name
+      activity_category
+      scanned_at
     }
+    updated_at
   }
 }
 ```
@@ -98,59 +101,58 @@ query {
 
 ```graphql
 mutation {
-  updateUser(id: Int, data: { name: "Sarah", phone: "+1 (555) 123 4567", skills: [{skill: "C++", rating: 5}] }) {
+  updateUser(id: Int, data: { name: "Sarah", phone: "+1 (555) 123 4567", email: "abc@example.com", badge_code: "apple-tree-water-earth"}) {
     id
     name
-    company
+    badge_code
     email
     phone
-    skills {
-      skill
-      rating
-      userId
-    }
+    updated_at
   }
 }
 ```
 #### Notes
 - You are not able to update the user's salt or QRCode hash (on purpose, for obvious reasons)
-- If you do not supply skills, then the server assumes no updates to skills.
-- If you supply a non-null value to skills, then the server assumes those are the user's new cumulative skills. (e.g, if the user had skill A, B, C, but you supply the mutation query with skill D, the user will now only have skill D).
-- You can make the user lose all their skills by supplying an empty array for skills.
 
-### Getting the frequency of skills with filtering
+### Getting the frequency of activities with filtering
 
 ```graphql
 query {
-  skillByFrequency(minFrequency: Int, maxFrequency: Int) {
-    skill
+  skillByFrequency(min_frequency?: Int, max_frequency?: Int activity_category?: String) {
+    activity_name
     _count {
       _all
     }
   }
 }
 ```
-Note that the frequency of each skill is stored in `_all`. 
+#### Notes
+- the frequency of each skill is stored in `_all`.
+- all parameters are optional 
+
 
 ## Enchancements
 
 ### Sign in Users
 
-You can sign in users using their QRCodeHash. You can query their QRCodeHash when getting a User information, or scanning the QRCode that correspondes to their QRCodeHash. The QRCode can be made from the salt and user info (see seed.ts to see how their QRCode hashes are generated).
+You can sign in users using their qr_code_hash. You can query their qr_code_hash when getting a user information. The QRCode is made from the salt and user info (see seed.ts to see how their QRCode hashes are generated).
 
 ```graphql
 mutation {
-  signInUser(QRCodeHash: "2031b72d27f923adfb478f365de778f38c84091f83eb956925c261f9248c79b8", signedInAt: "2024-02-19T23:15:01.306Z") {
-    id,
+  signInUser(qr_code_hash: "2031b72d27f923adfb478f365de778f38c84091f83eb956925c261f9248c79b8", signed_in_at: "2024-02-19T23:15:01.306Z") {
+    id
     name
+    badge_code
     email
-    company
-    signedIn
-    signedInAt
-    skills {
-      rating
-      skill
+    phone
+    salt
+    qr_code_hash
+    scans {
+      activity_name
+      activity_category
+      scanned_at
     }
+    updated_at
   }
 }
 ```
@@ -158,7 +160,8 @@ mutation {
 #### Notes
 - will return the user (with nothing changed) if the user is already signed in.
 - will return an error message and data will be null if no user matches the QRCode hash
-- `signedInAt` must be in 8601 ISO date time format
+- `signed_in_at` must be in 8601 ISO date time format
+- we supply the signed_in_at - to reflect the time the user was actually signed in (in case server is slow)
 
 ### User sign in data
 gets how many users signed in between `startTime` and `endTime`, by the hour
@@ -175,44 +178,6 @@ query {
 #### Notes
 - both `startTime` and `endTime` must be in ISO 8601 date time format
 
-### Get all events
-You can get all the events of the hackathon with the following query
-```graphql
-query {
-  allEvents {
-    event
-  }
-}
-```
-
-### Sign in to Event
-You can sign in a user to an event with the following query
-```graphql
-query {
-  eventSignIn(userQRHash: "2031b72d27f923adfb478f365de778f38c84091f83eb956925c261f9248c79b8", event: "cohere") {
-    events {
-      event
-    }
-  }
-}
-```
-
-#### Notes
-- It returns an user object, so you can query other user fields such as `name`, `company`, `QRCodeHash`, etc.
-- It will give an error message and return null if user with hash `userQRHash` does not exist
-- It will given an error message and return null if no such event `event` exists
-
-### User events
-you can find out what events the user has signed in to using the user query
-```graphql
-query {
-  user(id: 1) {
-    events {
-      event
-    }
-  }
-}
-```
 
 ## Running Tests
 
