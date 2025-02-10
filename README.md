@@ -78,7 +78,7 @@ query {
 
 ```graphql
 query {
-  user(id: Int) {
+  user(id?: Int, email?: string, qr_code_hash?: string) {
     id
     name
     badge_code
@@ -95,6 +95,10 @@ query {
   }
 }
 ```
+
+## Note
+- you can supply either the id, email, or qr_code_hash to get the user
+- if you supply none of them, you will get thrown an error (rejected promise)
 
 
 ### Updating a User
@@ -118,7 +122,7 @@ mutation {
 
 ```graphql
 query {
-  skillByFrequency(min_frequency?: Int, max_frequency?: Int activity_category?: String) {
+  scans(min_frequency?: Int, max_frequency?: Int activity_category?: String) {
     activity_name
     _count {
       _all
@@ -127,7 +131,7 @@ query {
 }
 ```
 #### Notes
-- the frequency of each skill is stored in `_all`.
+- the frequency of each activity is stored in `_all`.
 - all parameters are optional 
 
 
