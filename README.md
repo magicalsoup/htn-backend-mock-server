@@ -168,19 +168,19 @@ mutation {
 - we supply the signed_in_at - to reflect the time the user was actually signed in (in case server is slow)
 
 ### User sign in data
-gets how many users signed in between `startTime` and `endTime`, by the hour
+gets how many users signed in between `start_time` and `end_time`, by the hour
 
 ```graphql
 query {
-  signInData(startTime: "2024-02-18T19:15:20.559Z", endTime: "2024-02-18T23:15:20.559Z") {
+  signInData(start_time: "2024-02-18T19:15:20.559Z", end_time: "2024-02-18T23:15:20.559Z") {
     hour
-    numberOfUsers
+    num_of_users
   }
 }
 ```
 
 #### Notes
-- both `startTime` and `endTime` must be in ISO 8601 date time format
+- both `start_time` and `end_time` must be in ISO 8601 date time format
 
 
 ## Running Tests
